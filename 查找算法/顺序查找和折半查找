@@ -1,0 +1,135 @@
+//编写人：naruuu
+//编写功能：折半查找 顺序查找
+
+#include <stdio.h>
+#include <stdlib.h>
+#define scanf scanf_s
+
+#define MAXSIZE 10
+#define NotFound 0
+typedef int ElementType;
+
+typedef int Position;
+typedef struct LNode *List;
+struct LNode {
+    ElementType Data[MAXSIZE];
+    Position Last; /* 保存线性表中最后一个元素的位置 */
+};
+Position BinarySearch( List L, ElementType X );
+Position SeqSearch( List L, ElementType X );
+List ReadInput(){ /* 裁判实现，细节不表。元素从下标1开始存储 */
+    List L=(List)malloc(sizeof *L);
+	int i;
+	printf("请输入顺序表的最大长度\n");
+	scanf("%d",&L->Last);
+	printf("请输入顺序表中的元素:\n");
+	for(i=1;i<=L->Last;i++)scanf("%d",&L->Data[i]);
+	return L;
+}
+int main()
+{
+    List L;
+    ElementType X;
+    Position P;
+
+    L = ReadInput();
+	printf("请输入你要查找的元素:\n");
+    scanf("%d", &X);
+    P = BinarySearch( L, X );
+		if(!P)
+		printf("查无此元素!\n");
+	else
+		printf("二分查找结果:%d\n", P);
+
+	P = SeqSearch( L, X );
+	if(!P)
+		printf("查无此元素!\n");
+		
+	else
+		printf("顺序查找结果:%d\n", P);
+    return 0;
+}
+
+
+Position BinarySearch( List L, ElementType X ){
+    int n=L->Last;
+	int left=1,right=n;
+	int count=0;
+	while(left<=right)
+	{
+	    int middle=(left+right)/2;
+		count++;
+		if(X<L->Data[middle]){
+		    right=middle-1;
+		}else if(X>L->Data[middle])
+			left=middle+1;
+		else{
+			printf("二分查找比较次数:%d\n",count);
+			return middle;
+		}
+	}
+	printf("二分查找比较次数:%d\n",count);
+	return NotFound;
+}
+
+Position SeqSearch( List L, ElementType X )
+{
+	int i;
+	int n=L->Last;
+	int count=0;
+	int result;
+	for(i=1;i<=n;++i)
+	{
+		count++;
+		if(L->Data[i]<X)
+			continue;
+		else if(L->Data[i]>X)
+			break;
+		else
+		{
+			printf("顺序查找的次数为:%d\n",count);
+			return i;
+		}	
+	}
+	printf("顺序查找的次数为:%d\n",count);
+	return NotFound;
+}
+
+
+
+
+
+
+
+/*
+测试结果：
+
+请输入顺序表的最大长度
+5
+请输入顺序表中的元素:
+12 31 55 89 101
+请输入你要查找的元素:
+31
+二分查找比较次数:3
+二分查找结果:2
+顺序查找的次数为:2
+顺序查找结果:2
+
+
+
+请输入顺序表的最大长度
+3
+请输入顺序表中的元素:
+26 78 233
+请输入你要查找的元素:
+31
+二分查找比较次数:2
+查无此元素!
+顺序查找的次数为:2
+查无此元素!
+
+
+
+
+0
+*/
