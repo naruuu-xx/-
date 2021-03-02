@@ -1,0 +1,187 @@
+//编写人：naruuu
+//编写功能：输入二叉树 返回二叉树的前中后序遍历结果
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+
+
+
+typedef struct tree
+{
+    char data;//存储树的元素，可以存储字符。
+	struct tree *left;//左子树指针
+	struct tree *right;//右子树指针
+}BitTreeNode , *Tree;
+
+
+void CreateBitTree(Tree &T,char *presrc,int &pos)//先序遍历创建二叉树   
+	
+    int posleft;
+	if(presrc==NULL) {T=NULL; return;}
+	if(presrc[pos]=='#') {T=NULL; pos++; return;}
+	T=new BitTreeNode;
+	T->data=presrc[pos++];
+	CreateBitTree(T->left,presrc,pos);
+	CreateBitTree(T->right,presrc,pos);
+}
+
+/*
+    显示树的性质，包括树高度、结点总数，叶子总数
+*/
+//高度计算 递归遍历左子树和右子树的高度 哪边高 哪边+1便是树的总高度
+int GetHeight(Tree T)//5.5
+{
+	int l,r;
+
+	if(T==NULL)
+		return 0;
+	else
+	{
+		l=GetHeight(T->left);
+		r=GetHeight(T->right);
+		if(l>r)
+			return l+1;
+		else
+			return r+1;
+	}
+}
+
+//计算叶结点 遍历左右子树若左右子树叶结点均为0 则总叶结点为1（只有根结点）
+//否则叶结点总数即为左子树叶结点数+右子树叶结点数
+int GetLeaf(Tree T)//叶结点
+{
+     if(T==NULL)
+		 return 0;
+	 else if(T->left==NULL&&T->right==NULL)
+		 return 1;
+	 else
+		 return GetLeaf(T->left)+GetLeaf(T->right);
+
+}
+
+
+//总结点：遍历左子树的结点+右子树的结点
+int GetSize(Tree T)//总结点 5.6
+{
+    if(T==NULL) return 0;
+	return GetSize(T->left)+GetSize(T->right)+1;
+}
+
+/*
+    显示二叉树前序、中序、后序的遍历结果
+*/
+
+void PreOrder(Tree T)
+{
+	if(T)
+	{
+		printf("%c",T->data);
+		PreOrder(T->left);
+		PreOrder(T->right);
+	}
+	else return;
+ 
+}
+void InOrder(Tree T)//middle 5.1
+{
+
+	if(T)
+	{
+		InOrder(T->left);
+		printf("%c",T->data);
+		InOrder(T->right);
+	}
+	else return;
+}
+void PostOrder(Tree T)//last
+{
+
+	if(T)
+	{
+		PostOrder(T->left);
+		PostOrder(T->right);
+		printf("%c",T->data);
+	}
+	else return;
+}
+void TestAll(char *s)
+{
+	Tree T;//树T
+	int pos=0;
+	CreateBitTree(T,s,pos);
+	printf("\n二叉树:%s\n",s);
+	printf("高度是:%d\n",GetHeight(T));
+	printf("结点总数是%d\n",GetSize(T));
+    printf("叶子结点数是:%d\n",GetLeaf(T));
+	printf("\n");
+	printf("该二叉树前序遍历的结果是:");
+	PreOrder(T);
+	printf("\n");
+	printf("该二叉树中序遍历的结果是:");
+	InOrder(T);
+	printf("\n");
+	printf("该二叉树后序遍历的结果是:");
+	PostOrder(T);
+	printf("\n");
+}
+void main()
+{
+	TestAll("ABC##DE#G##F###");
+	TestAll("ABDEFGH#######C##");
+	TestAll("ABDH##I##EJ##K##CF##G##");
+	TestAll("A#B#C#D##");
+	TestAll("#");
+}
+
+
+/*测试结果：
+
+二叉树:ABC##DE#G##F###
+高度是:5
+结点总数是7
+叶子结点数是:3
+
+该二叉树前序遍历的结果是:ABCDEGF
+该二叉树中序遍历的结果是:CBEGDFA
+该二叉树后序遍历的结果是:CGEFDBA
+
+二叉树:ABDEFGH#######C##
+高度是:7
+结点总数是8
+叶子结点数是:2
+
+该二叉树前序遍历的结果是:ABDEFGHC
+该二叉树中序遍历的结果是:HGFEDBAC
+该二叉树后序遍历的结果是:HGFEDBCA
+
+二叉树:ABDH##I##EJ##K##CF##G##
+高度是:4
+结点总数是11
+叶子结点数是:6
+
+该二叉树前序遍历的结果是:ABDHIEJKCFG
+该二叉树中序遍历的结果是:HDIBJEKAFCG
+该二叉树后序遍历的结果是:HIDJKEBFGCA
+
+二叉树:A#B#C#D##
+高度是:4
+结点总数是4
+叶子结点数是:1
+
+该二叉树前序遍历的结果是:ABCD
+该二叉树中序遍历的结果是:ABCD
+该二叉树后序遍历的结果是:DCBA
+
+二叉树:#
+高度是:0
+结点总数是0
+叶子结点数是:0
+
+该二叉树前序遍历的结果是:
+该二叉树中序遍历的结果是:
+该二叉树后序遍历的结果是:
+
+*/
+————————————————
+版权声明：本文为CSDN博主「なるnaruuuu」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/nruuu/article/details/111561392
