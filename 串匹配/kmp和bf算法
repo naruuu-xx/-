@@ -1,0 +1,148 @@
+//主要根据于严蔚敏版数据结构书上的代码进行修改以及课后相关题进行的代码测试。
+//编写人：naruuu
+//编写功能：kmp算法
+//要点：next数组和nextval数组的代码以及求解原理。
+//注：在vs上运行此代码时请注意将项目属性中c/c++栏中语言内的符合模式改成否。否则会出现：”const char * 类型的值不能用于初始化 char * 类型”的错误.
+
+#include<stdio.h>
+#include<string.h>
+#include<conio.h>
+#include<windows.h>
+#define MAX 255
+int next[MAX];
+int nextval[MAX];
+typedef struct sstring
+{
+	char ch[MAX];
+	int length;
+}SString;
+void get_next(SString T,int next[])
+{
+	int i=1,j=0;
+	next[1]=0;
+	while(i<T.length)
+	{
+		if(j==0||T.ch[i]==T.ch[j])
+		{
+			++i;
+			++j;
+			next[i]=j;
+		}
+		else
+			j=next[j];
+	}
+
+}
+void get_nextval(SString T,int next[])
+{
+
+	int i=1,j=0;
+	next[1]=0;
+	while(i<T.length)
+	{
+		if(j==0||T.ch[i]==T.ch[j])
+		{
+			++i;
+			++j;
+			if(T.ch[i]!=T.ch[j])
+				next[i]=j;
+			else
+				next[i]=next[j];
+		}
+		else
+			j=next[j];
+	}
+}
+
+int Index_KMP(SString S,SString T,int pos)
+{
+//其中，T非空，1<=pos<=T.length
+	int i=pos,j=1;
+	while(i<=S.length&&j<=T.length)
+	{
+		if(j==0||S.ch[i]==T.ch[j])
+		{
+			++i;
+			++j;
+		}
+		else
+			j=next[j];
+	}
+	if(j>T.length)
+		return i-T.length;
+	else
+		return 0;
+
+
+}
+void TestKMP(char *s,char *t){
+	int i;
+	SString S,T;
+	for(i=0;s[i]!='\0';i++){       S.ch[i+1]=s[i];       }S.ch[i+1]='\0';S.length=i;
+	for(i=0;t[i]!='\0';i++){       T.ch[i+1]=t[i];       }T.ch[i+1]='\0';T.length=i;
+	get_next(T,next);
+	get_nextval(T,nextval);
+	printf("\n**********************************************");
+	printf("\n               主串：%s",&S.ch[1]);
+	printf("\n             模式串：%s",&T.ch[1]);
+	printf("\n      next数组：");for(i=1;i<=T.length;i++)printf("%d",next[i]);
+	printf("\n   nextval数组：");for(i=1;i<=T.length;i++)printf("%d",nextval[i]);
+	i=Index_KMP(S,T,1);
+	printf("\nKMP算法返回结果：%d",i);
+	printf("\n************************************************\n");
+}
+int main(){
+	TestKMP("ababaababababaaababaaaa","ababaaababaa");//选择题第三题
+	TestKMP("ababaababababaaababaaaa","ababaabab");//选择题第四题
+	TestKMP("ababaababababaaababaaaa","abcaabbabcab");//课本应用题1
+	TestKMP("abcaabbabccabaacbacba","abcabaa");//课本应用题2
+	TestKMP("abcaabbabccabaacbacba","aabbabcc");
+	return 0;
+}
+
+
+
+测试结果：
+/*
+
+**********************************************
+               主串：ababaababababaaababaaaa
+             模式串：ababaaababaa
+      next数组：011234223456
+   nextval数组：010104210104
+KMP算法返回结果：10
+************************************************
+
+**********************************************
+               主串：ababaababababaaababaaaa
+             模式串：ababaabab
+      next数组：011234234
+   nextval数组：010104101
+KMP算法返回结果：1
+************************************************
+
+**********************************************
+               主串：ababaababababaaababaaaa
+             模式串：abcaabbabcab
+      next数组：011122312345
+   nextval数组：011021301105
+KMP算法返回结果：0
+************************************************
+
+**********************************************
+               主串：abcaabbabccabaacbacba
+             模式串：abcabaa
+      next数组：0111232
+   nextval数组：0110132
+KMP算法返回结果：0
+************************************************
+
+**********************************************
+               主串：abcaabbabccabaacbacba
+             模式串：aabbabcc
+      next数组：01211211
+   nextval数组：00210211
+KMP算法返回结果：4
+************************************************
+
+Press any key to continue*/
